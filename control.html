@@ -1,2 +1,32 @@
 <!DOCTYPE html>
-<html><head><title>Control Panel</title></head><body><h1>Control Panel</h1></body></html>
+<html>
+<head>
+  <title>Control Panel</title>
+</head>
+<body>
+  <h1>Control Panel</h1>
+  <button onclick="sendMove('up')">⬆️ Up</button>
+  <br>
+  <button onclick="sendMove('left')">⬅️ Left</button>
+  <button onclick="sendMove('down')">⬇️ Down</button>
+  <button onclick="sendMove('right')">➡️ Right</button>
+
+  <script>
+    const backendURL = "https://grid-game-backend.onrender.com"; // replace with your real backend URL
+
+    async function sendMove(direction) {
+      const res = await fetch(`${backendURL}/move`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ direction, secret: "MY_SECRET_KEY" })
+      });
+
+      if (res.ok) {
+        console.log(`Moved ${direction}`);
+      } else {
+        alert("Move failed!");
+      }
+    }
+  </script>
+</body>
+</html>
