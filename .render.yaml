@@ -1,0 +1,16 @@
+services:
+-type: web
+name: grid-game-backend
+env: node 
+plan: free
+buildCommand: "npm install"
+startCommand: "node server.js"
+envVars:
+  -key: SECRET_KEY
+  value: MY_SECRET_KEY
+  autoDeploy: true 
+-type: static 
+name: grid-game-frontend
+env: static
+buildCommand: ""
+staticPublishPath: . 
