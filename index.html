@@ -1,2 +1,82 @@
 <!DOCTYPE html>
-<html><head><title>Grid Game</title></head><body><h1>Grid Game</h1></body></html>
+<html>
+<head>
+  <title>Grid Game</title>
+  <style>
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      gap: 2px;
+    }
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+    }
+    .player1 {
+      background-color: blue;
+    }
+    .player2 {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grid Game</h1>
+  <div id="grid"></div>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const backendURL = "https://grid-game-backend.onrender.com"; // replace if needed
+
+    function createGrid(p1, p2) {
+      grid.innerHTML = "";
+      for (let y = 0; y < 10; y++) {
+        for (let x = 0; x < 10; x++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          if (x === p1.x && y === p1.y) cell.classList.add("player1");
+          if (x === p2.x && y === p2.y) cell.classList.add("player2");
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    async function getPositions() {
+      try {
+        const res = await fetch(`${backendURL}/position`);
+        const data = await res.json();
+        createGrid(data.player1, data.player2);
+      } catch (e) {
+        console.error("Failed to fetch positions", e);
+      }
+    }
+
+    async function movePlayer1(direction) {
+      await fetch(`${backendURL}/move`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ direction, secret: "MY_SECRET_KEY", player: "player1" })
+      });
+    }
+
+    // Handle WASD keys
+    document.addEventListener("keydown", (e) => {
+      const keys = {
+        w: "up",
+        a: "left",
+        s: "down",
+        d: "right"
+      };
+      const dir = keys[e.key.toLowerCase()];
+      if (dir) movePlayer1(dir);
+    });
+
+    // Refresh grid every 300ms
+    setInterval(getPositions, 300);
+    getPositions();
+  </script>
+</body>
+</html>
