@@ -29,7 +29,8 @@
 
   <script>
     const grid = document.getElementById("grid");
-    const backendURL = "https://grid-game-backend.onrender.com"; // replace if needed
+    const backendURL = "https://grid-game-backend.onrender.com";
+    const SECRET_KEY = "MY_SECRET_KEY";
 
     function createGrid(p1, p2) {
       grid.innerHTML = "";
@@ -54,24 +55,19 @@
       }
     }
 
-    async function movePlayer1(direction) {
+    async function movePlayer(player, direction) {
       await fetch(`${backendURL}/move`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ direction, secret: "MY_SECRET_KEY", player: "player1" })
+        body: JSON.stringify({ direction, secret: SECRET_KEY, player })
       });
     }
 
-    // Handle WASD keys
+    // Handle WASD input (Player 1)
     document.addEventListener("keydown", (e) => {
-      const keys = {
-        w: "up",
-        a: "left",
-        s: "down",
-        d: "right"
-      };
+      const keys = { w: "up", a: "left", s: "down", d: "right" };
       const dir = keys[e.key.toLowerCase()];
-      if (dir) movePlayer1(dir);
+      if (dir) movePlayer("player1", dir);
     });
 
     // Refresh grid every 300ms
@@ -80,4 +76,3 @@
   </script>
 </body>
 </html>
-
