@@ -14,7 +14,7 @@ app.get("/position", (req, res) => {
   res.json({ player1, player2 });
 });
 
-// Move a player
+// Move a player (POST method)
 app.post("/move", (req, res) => {
   const { direction, secret, player } = req.body;
 
@@ -23,7 +23,6 @@ app.post("/move", (req, res) => {
   }
 
   const p = player === "player1" ? player1 : player2;
-
   if (direction === "up" && p.y > 0) p.y--;
   if (direction === "down" && p.y < 9) p.y++;
   if (direction === "left" && p.x > 0) p.x--;
@@ -32,6 +31,25 @@ app.post("/move", (req, res) => {
   res.json({ success: true });
 });
 
-// Start server
+// ✅ Move a player (GET method via /trigger)
+app.get("/trigger", (req, res) => {
+  const { direction, secret, player = "player1" } = req.query;
+
+  if (secret !== "MY_SECRET_KEY") {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  const p = player === "player1" ? player1 : player2;
+  if (direction === "up" && p.y > 0) p.y--;
+  if (direction === "down" && p.y < 9) p.y++;
+  if (direction === "left" && p.x > 0) p.x--;
+  if (direction === "right" && p.x < 9) p.x++;
+
+  res.json({ success: true });
+});
+
+// Start
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
